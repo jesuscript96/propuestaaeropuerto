@@ -65,6 +65,98 @@ const Slide1Cover = ({ onClick }: { onClick: () => void; key?: React.Key }) => (
   </div>
 );
 
+const Slide1QuienEsPublimex = () => {
+  const concepts = [
+    {
+      num: "01",
+      title: "Imagen de marca potente"
+    },
+    {
+      num: "02",
+      title: "Rojo predominante"
+    },
+    {
+      num: "03",
+      title: "Logo visible"
+    },
+    {
+      num: "04",
+      title: "Frases inspiradoras"
+    }
+  ];
+
+  return (
+    <div className="relative flex flex-col justify-center p-6 pb-32 md:p-12 md:pb-32 lg:p-20 h-full bg-[#E60000] text-white select-none overflow-y-auto lg:overflow-hidden">
+      {/* Clean background lines for editorial feel */}
+      <div className="absolute inset-0 opacity-[0.05] pointer-events-none border-l border-r border-white mx-16 lg:mx-32" />
+
+      <div className="max-w-7xl w-full mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-16 items-stretch z-10">
+        
+        {/* Left Column: Title and Answer */}
+        <div className="lg:col-span-4 flex flex-col justify-start gap-8 border-b lg:border-b-0 lg:border-r border-white/10 pb-6 lg:pb-0 lg:pr-12">
+          <div className="flex flex-col gap-4">
+            <div className="inline-flex items-center gap-2 px-3 py-1 bg-black text-white text-[10px] md:text-xs font-bold uppercase tracking-widest self-start rounded-sm border border-white/10 shadow-md">
+              Publimex
+            </div>
+            
+            <h2 className="text-4xl md:text-6xl font-squada text-white uppercase tracking-wider leading-none">
+              ¿Quién es <br className="hidden lg:block" />
+              Publimex?
+            </h2>
+            <div className="w-16 h-1 bg-black mt-1" />
+            
+            <p className="text-xl md:text-3xl font-light italic tracking-wide text-white/95 mt-4 font-sans">
+              "Alguien que inspira"
+            </p>
+          </div>
+        </div>
+
+        {/* Right Column: Key Concepts (Only titles) and Large Image underneath */}
+        <div className="lg:col-span-8 flex flex-col justify-between gap-6 lg:pl-8">
+          <div className="flex flex-col gap-1 border-b border-white/10 pb-4">
+            <span className="text-xs font-bold text-white/60 uppercase tracking-widest">
+              Pilares de Comunicación
+            </span>
+            <h3 className="text-2xl md:text-3xl font-squada tracking-wider text-white uppercase leading-tight">
+              Los Conceptos Clave de Nuestra Presencia
+            </h3>
+          </div>
+
+          {/* Concepts Grid (No Subtexts) */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-4 my-2">
+            {concepts.map((item, idx) => {
+              return (
+                <motion.div
+                  key={idx}
+                  whileHover={{ x: 6 }}
+                  className="group flex gap-4 items-center"
+                >
+                  <span className="text-2xl font-squada tracking-wider text-white/35 group-hover:text-yellow-400 transition-colors duration-300 w-8 flex-shrink-0">
+                    {item.num}
+                  </span>
+                  <h4 className="text-base font-bold text-white uppercase tracking-wide group-hover:text-yellow-300 transition-colors duration-300">
+                    {item.title}
+                  </h4>
+                </motion.div>
+              );
+            })}
+          </div>
+
+          {/* Large Spectacular Image underneath the concepts */}
+          <div className="overflow-hidden border-2 border-white shadow-2xl relative aspect-video w-full">
+            <img 
+              src="/publimex_espectacular.jpg" 
+              alt="Publimex Espectacular" 
+              className="w-full h-full object-cover transition-transform duration-700 hover:scale-[1.02]" 
+            />
+          </div>
+        </div>
+
+      </div>
+    </div>
+  );
+};
+
 const Slide2Agencia = () => {
   const questionsData = [
     { id: 1, title: "¿Para quién?", subtitle: "La Audiencia" },
@@ -87,24 +179,21 @@ const Slide2Agencia = () => {
         <div className="lg:col-span-4 flex flex-col justify-between border-b lg:border-b-0 lg:border-r border-white/10 pb-6 lg:pb-0 lg:pr-12">
           <div className="flex flex-col gap-4">
             <div className="inline-flex items-center gap-2 px-3 py-1 bg-black text-white text-[10px] md:text-xs font-bold uppercase tracking-widest self-start rounded-sm border border-white/10 shadow-md">
-              La Agencia Creativa
+              La Brújula Creativa
             </div>
             <h2 className="text-4xl md:text-6xl font-squada text-white uppercase tracking-wider leading-none">
               Experiencias <br className="hidden lg:block" />
               que inspiran
             </h2>
             <div className="w-16 h-1 bg-black mt-2" />
-            <p className="text-xs md:text-sm text-white/80 leading-relaxed font-light mt-2">
-              Crear es interrogar al espacio urbano. En exteriores, el éxito depende del contexto y del comportamiento humano en movimiento. Así enfocamos cada campaña.
-            </p>
           </div>
 
-          <div className="mt-8 border-l-2 border-white/30 pl-4 py-1">
-            <span className="text-[9px] md:text-[10px] text-white/50 font-bold uppercase tracking-widest block mb-1">
-              Regla de Oro OOH
+          <div className="mt-8 border-l-2 border-white/30 pl-4 py-2 bg-black/25">
+            <span className="text-[10px] text-white/60 font-bold uppercase tracking-widest block mb-1">
+              Definición: Inspirar
             </span>
-            <p className="text-xs text-white/90 italic leading-relaxed font-light">
-              "Si tu anuncio necesita más de 5 segundos para entenderse, no funciona. La clave: un solo mensaje, impacto visual contundente y respuesta inmediata."
+            <p className="text-xs md:text-sm text-white/95 italic leading-relaxed font-normal">
+              "Infundir o hacer nacer en el ánimo o la mente afectos, ideas, designios, etc."
             </p>
           </div>
         </div>
@@ -926,17 +1015,18 @@ export default function App() {
   // Total slides calculations
   // Slides index mapping:
   // 0: Cover
-  // 1: Agencia
-  // 2: Menu
-  // 3+: Campaign specific slides
+  // 1: ¿Quién es Publimex?
+  // 2: Agencia
+  // 3: Menu
+  // 4+: Campaign specific slides
   const campaignSlidesCount = selectedCampaign === 'aroma' ? 7 : (selectedCampaign === 'cdmx' ? 6 : 1);
-  const totalSlides = 3 + campaignSlidesCount;
+  const totalSlides = 4 + campaignSlidesCount;
 
   const nextSlide = useCallback(() => {
-    if (currentSlide === 2 && !selectedCampaign) {
+    if (currentSlide === 3 && !selectedCampaign) {
       // If user presses Next on Menu, default to 'cdmx' to avoid locking
       setSelectedCampaign('cdmx');
-      setCurrentSlide(3);
+      setCurrentSlide(4);
       return;
     }
     setCurrentSlide((prev) => (prev + 1) % totalSlides);
@@ -957,17 +1047,18 @@ export default function App() {
 
   const handleSelectCampaign = (campaign: 'cdmx' | 'aroma') => {
     setSelectedCampaign(campaign);
-    setCurrentSlide(3); // Advance directly to Concepto slide
+    setCurrentSlide(4); // Advance directly to Concepto slide
   };
 
   const renderSlide = () => {
     if (currentSlide === 0) return <Slide1Cover key="slide0" onClick={nextSlide} />;
-    if (currentSlide === 1) return <Slide2Agencia key="slide1" />;
-    if (currentSlide === 2) return <Slide2Menu key="slide2" onSelectCampaign={handleSelectCampaign} selectedCampaign={selectedCampaign} />;
+    if (currentSlide === 1) return <Slide1QuienEsPublimex key="slide1" />;
+    if (currentSlide === 2) return <Slide2Agencia key="slide2" />;
+    if (currentSlide === 3) return <Slide2Menu key="slide3" onSelectCampaign={handleSelectCampaign} selectedCampaign={selectedCampaign} />;
 
     // Campaign Specific Flow
     const campaignKey = selectedCampaign || 'cdmx';
-    const relativeIndex = currentSlide - 3;
+    const relativeIndex = currentSlide - 4;
 
     if (relativeIndex === 0) {
       return <Slide2Concepto key={`${campaignKey}-concepto`} campaign={campaignKey} />;
@@ -1119,11 +1210,11 @@ export default function App() {
       <div className="absolute inset-0 opacity-[0.03] pointer-events-none mix-blend-overlay" style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.65%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22/%3E%3C/svg%3E")' }}></div>
 
       {/* Floating back to Menu and Campaign Indicator */}
-      {currentSlide >= 3 && (
+      {currentSlide >= 4 && (
         <div className="absolute top-6 left-6 md:left-12 z-[90] flex items-center gap-4 select-none">
           <button
             onClick={() => {
-              setCurrentSlide(2);
+              setCurrentSlide(3);
             }}
             className="flex items-center gap-2 py-2 px-4 bg-black/60 border border-white/20 hover:border-white/50 text-white text-xs font-semibold uppercase tracking-wider transition-all backdrop-blur-md rounded-none shadow-md group hover:bg-black cursor-pointer"
           >
@@ -1156,7 +1247,7 @@ export default function App() {
               key={i}
               onClick={(e) => {
                 e.stopPropagation();
-                if (i >= 3 && !selectedCampaign) setSelectedCampaign('cdmx');
+                if (i >= 4 && !selectedCampaign) setSelectedCampaign('cdmx');
                 setCurrentSlide(i);
               }}
               className={`h-1.5 rounded-full transition-all duration-300 cursor-pointer ${
