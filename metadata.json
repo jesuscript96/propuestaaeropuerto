@@ -1,0 +1,6 @@
+{
+  "name": "Publimex Presentación",
+  "description": "Presentación conceptual para la cobertura de Publimex durante la fiesta del fútbol en Ciudad de México.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
