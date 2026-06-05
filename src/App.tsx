@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Map, PlaneTakeoff, ExternalLink, Eye, ChevronLeft, ChevronRight, Activity, MapPin, Building, MoveRight, Trophy, X, Target, Sparkles, Layers, Lightbulb, Heart, Gift, Smile } from 'lucide-react';
+import { Map, PlaneTakeoff, ExternalLink, Eye, ChevronLeft, ChevronRight, Activity, MapPin, Building, MoveRight, Trophy, X, Target, Sparkles, Layers, Lightbulb, Heart, Gift, Smile, ZoomIn, ZoomOut, RotateCw, RefreshCw } from 'lucide-react';
 
 const SoccerBallIcon = ({ className }: { className?: string }) => (
   <svg
@@ -25,8 +25,11 @@ const SoccerBallIcon = ({ className }: { className?: string }) => (
   </svg>
 );
 
-const Slide1Cover = () => (
-  <div className="flex flex-col items-center justify-center p-8 text-center h-full max-w-5xl mx-auto">
+const Slide1Cover = ({ onClick }: { onClick: () => void; key?: React.Key }) => (
+  <div 
+    onClick={onClick}
+    className="relative flex flex-col items-center justify-center p-8 text-center h-full max-w-5xl mx-auto cursor-pointer select-none"
+  >
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
@@ -44,6 +47,21 @@ const Slide1Cover = () => (
     >
       EXPERIENCIA QUE INSPIRA
     </motion.h2>
+
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: [0.3, 0.8, 0.3], y: [0, 6, 0] }}
+      transition={{ 
+        delay: 1.2, 
+        duration: 2.5, 
+        repeat: Infinity, 
+        ease: "easeInOut"
+      }}
+      className="absolute bottom-24 left-0 right-0 flex flex-col items-center gap-1.5 text-white/50 text-[10px] md:text-xs uppercase tracking-widest pointer-events-none"
+    >
+      <span>Toca o desliza para comenzar</span>
+      <ChevronRight className="w-4 h-4 rotate-90 text-[#E60000] bg-white rounded-full p-0.5 animate-bounce" />
+    </motion.div>
   </div>
 );
 
@@ -59,7 +77,7 @@ const Slide2Agencia = () => {
   ];
 
   return (
-    <div className="relative flex flex-col justify-center p-6 md:p-12 lg:p-20 h-full bg-[#E60000] text-white select-none overflow-y-auto lg:overflow-hidden">
+    <div className="relative flex flex-col justify-center p-6 pb-32 md:p-12 md:pb-32 lg:p-20 h-full bg-[#E60000] text-white select-none overflow-y-auto lg:overflow-hidden">
       {/* Clean background lines for editorial feel */}
       <div className="absolute inset-0 opacity-[0.05] pointer-events-none border-l border-r border-white mx-16 lg:mx-32" />
 
@@ -132,7 +150,7 @@ const Slide2Agencia = () => {
 
 const Slide2Menu = ({ onSelectCampaign, selectedCampaign }: { onSelectCampaign: (campaign: 'cdmx' | 'aroma') => void; selectedCampaign: 'cdmx' | 'aroma' | null; key?: React.Key }) => {
   return (
-    <div className="relative flex flex-col justify-center p-6 md:p-12 lg:p-20 h-full bg-[#E60000] text-white select-none overflow-y-auto lg:overflow-hidden">
+    <div className="relative flex flex-col justify-center p-6 pb-32 md:p-12 md:pb-32 lg:p-20 h-full bg-[#E60000] text-white select-none overflow-y-auto lg:overflow-hidden">
       {/* Clean background lines */}
       <div className="absolute inset-0 opacity-[0.05] pointer-events-none border-l border-r border-white mx-16 lg:mx-32" />
 
@@ -229,7 +247,7 @@ const Slide2Concepto = ({ campaign }: { campaign: 'cdmx' | 'aroma'; key?: React.
   const isAroma = campaign === 'aroma';
 
   return (
-    <div className="relative flex flex-col justify-center p-4 md:p-8 lg:p-12 h-full bg-gradient-to-b from-[#900000] via-[#E60000] to-[#500000] overflow-y-auto lg:overflow-hidden select-none">
+    <div className="relative flex flex-col justify-center p-6 pt-24 pb-32 md:p-8 md:pt-28 md:pb-36 lg:p-12 lg:pt-0 lg:pb-0 h-full bg-gradient-to-b from-[#900000] via-[#E60000] to-[#500000] overflow-y-auto lg:overflow-hidden select-none">
       {/* Ambient light effects */}
       <div className="absolute top-[-20%] left-[-20%] w-[60%] h-[60%] rounded-full bg-white/5 blur-[120px] pointer-events-none" />
       <div className="absolute bottom-[-20%] right-[-20%] w-[60%] h-[60%] rounded-full bg-yellow-500/5 blur-[120px] pointer-events-none" />
@@ -527,7 +545,7 @@ const Slide3Mensaje = ({ campaign }: { campaign: 'cdmx' | 'aroma'; key?: React.K
   const isAroma = campaign === 'aroma';
 
   return (
-    <div className="relative flex flex-col justify-center p-6 md:p-12 lg:p-20 h-full bg-[#E60000] text-white select-none overflow-y-auto lg:overflow-hidden">
+    <div className="relative flex flex-col justify-center p-6 pt-24 pb-32 md:p-12 md:pt-28 md:pb-36 lg:p-20 lg:pt-0 lg:pb-0 h-full bg-[#E60000] text-white select-none overflow-y-auto lg:overflow-hidden">
       {/* Clean background lines for editorial feel */}
       <div className="absolute inset-0 opacity-[0.05] pointer-events-none border-l border-r border-white mx-16 lg:mx-32" />
 
@@ -654,12 +672,68 @@ const ConceptSlide = ({ icon: Icon, title, description, badge, captureUrl }: any
   const [isOpen, setIsOpen] = useState(false);
   const isVideo = captureUrl?.endsWith('.mp4');
 
+  // Zoom and Rotate State
+  const [scale, setScale] = useState(1);
+  const [rotation, setRotation] = useState(0);
+  const [position, setPosition] = useState({ x: 0, y: 0 });
+  const [isDragging, setIsDragging] = useState(false);
+  const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
+
+  // Reset values when closed or opened
+  useEffect(() => {
+    if (!isOpen) {
+      setScale(1);
+      setRotation(0);
+      setPosition({ x: 0, y: 0 });
+    }
+  }, [isOpen]);
+
+  // Mouse Drag Handlers
+  const handleMouseDown = (e: React.MouseEvent) => {
+    if (scale <= 1) return;
+    setIsDragging(true);
+    setDragStart({ x: e.clientX - position.x, y: e.clientY - position.y });
+  };
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (!isDragging) return;
+    setPosition({
+      x: e.clientX - dragStart.x,
+      y: e.clientY - dragStart.y
+    });
+  };
+
+  const handleMouseUp = () => {
+    setIsDragging(false);
+  };
+
+  // Touch Drag Handlers (Mobile)
+  const handleTouchStart = (e: React.TouchEvent) => {
+    if (scale <= 1) return;
+    setIsDragging(true);
+    const touch = e.touches[0];
+    setDragStart({ x: touch.clientX - position.x, y: touch.clientY - position.y });
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (!isDragging) return;
+    const touch = e.touches[0];
+    setPosition({
+      x: touch.clientX - dragStart.x,
+      y: touch.clientY - dragStart.y
+    });
+  };
+
+  const handleTouchEnd = () => {
+    setIsDragging(false);
+  };
+
   return (
-    <div className="h-full w-full flex items-center justify-center p-8 md:p-16">
+    <div className="h-full w-full overflow-y-auto flex lg:items-center justify-center p-6 pt-24 pb-32 md:p-16 md:pt-28 md:pb-36 lg:p-12 lg:pt-0 lg:pb-0">
       <div className="max-w-6xl w-full grid grid-cols-1 lg:grid-cols-12 gap-8 md:gap-12 items-center">
 
         {/* Left Side: Text Details */}
-        <div className="lg:col-span-7 flex flex-col justify-center pt-12 lg:pt-0">
+        <div className="lg:col-span-7 flex flex-col justify-center">
           <div className="mb-4 md:mb-8 w-16 h-16 md:w-20 md:h-20 bg-black/40 border border-white/20 rounded-none flex items-center justify-center backdrop-blur-md">
             <Icon className="w-8 h-8 md:w-10 md:h-10 text-white" strokeWidth={1.5} />
           </div>
@@ -734,47 +808,105 @@ const ConceptSlide = ({ icon: Icon, title, description, badge, captureUrl }: any
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[100] flex items-center justify-center bg-black/95 backdrop-blur-xl p-4 md:p-12"
+            className="fixed inset-0 z-[100] flex items-center justify-center bg-black/95 backdrop-blur-xl p-4 md:p-12 overflow-hidden select-none"
             onClick={() => setIsOpen(false)}
+            onTouchStart={(e) => e.stopPropagation()}
+            onTouchMove={(e) => e.stopPropagation()}
+            onTouchEnd={(e) => e.stopPropagation()}
           >
+            {/* Zoom / Rotate Controls */}
+            <div 
+              className="absolute bottom-6 left-1/2 transform -translate-x-1/2 bg-black/80 border border-white/20 backdrop-blur-md px-6 py-2.5 flex items-center gap-6 z-50 rounded-none shadow-2xl"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <button
+                onClick={() => setScale(prev => Math.min(prev + 0.5, 4))}
+                className="p-1.5 hover:bg-white/10 text-white transition-colors cursor-pointer"
+                title="Acercar"
+              >
+                <ZoomIn className="w-6 h-6 text-[#E60000]" />
+              </button>
+              <button
+                onClick={() => setScale(prev => Math.max(prev - 0.5, 1))}
+                className="p-1.5 hover:bg-white/10 text-white transition-colors cursor-pointer"
+                title="Alejar"
+              >
+                <ZoomOut className="w-6 h-6 text-[#E60000]" />
+              </button>
+              <button
+                onClick={() => setRotation(prev => (prev + 90) % 360)}
+                className="p-1.5 hover:bg-white/10 text-white transition-colors cursor-pointer"
+                title="Girar 90°"
+              >
+                <RotateCw className="w-6 h-6 text-[#E60000]" />
+              </button>
+              <button
+                onClick={() => {
+                  setScale(1);
+                  setRotation(0);
+                  setPosition({ x: 0, y: 0 });
+                }}
+                className="p-1.5 hover:bg-white/10 text-white transition-colors cursor-pointer"
+                title="Restablecer"
+              >
+                <RefreshCw className="w-6 h-6 text-[#E60000]" />
+              </button>
+            </div>
+
+            {/* Lightbox Image/Video Frame */}
             <motion.div
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
               transition={{ type: "spring", damping: 25, stiffness: 200 }}
-              className="relative max-w-6xl w-full max-h-[85vh] overflow-hidden rounded-none border-2 border-white bg-zinc-950 shadow-[8px_8px_0px_#000000] flex items-center justify-center"
+              className="relative w-full h-full max-h-[85vh] max-w-6xl flex items-center justify-center overflow-hidden"
               onClick={(e) => e.stopPropagation()}
             >
-              {isVideo ? (
-                <video
-                  src={captureUrl}
-                  autoPlay
-                  controls
-                  loop
-                  className="w-full h-full max-h-[80vh] object-contain"
-                />
-              ) : (
-                <img
-                  src={captureUrl}
-                  alt={title}
-                  className="w-full h-full max-h-[80vh] object-contain"
-                />
-              )}
+              <div
+                className="relative flex items-center justify-center w-full h-full"
+                onMouseDown={handleMouseDown}
+                onMouseMove={handleMouseMove}
+                onMouseUp={handleMouseUp}
+                onMouseLeave={handleMouseUp}
+                onTouchStart={handleTouchStart}
+                onTouchMove={handleTouchMove}
+                onTouchEnd={handleTouchEnd}
+              >
+                {isVideo ? (
+                  <video
+                    src={captureUrl}
+                    autoPlay
+                    controls
+                    loop
+                    className="w-full h-full max-h-[80vh] object-contain pointer-events-auto select-none"
+                    style={{
+                      transform: `translate(${position.x}px, ${position.y}px) scale(${scale}) rotate(${rotation}deg)`,
+                      cursor: scale > 1 ? (isDragging ? 'grabbing' : 'grab') : 'default',
+                      transition: isDragging ? 'none' : 'transform 0.2s cubic-bezier(0.16, 1, 0.3, 1)'
+                    }}
+                  />
+                ) : (
+                  <img
+                    src={captureUrl}
+                    alt={title}
+                    className="w-full h-full max-h-[80vh] object-contain pointer-events-none select-none"
+                    style={{
+                      transform: `translate(${position.x}px, ${position.y}px) scale(${scale}) rotate(${rotation}deg)`,
+                      cursor: scale > 1 ? (isDragging ? 'grabbing' : 'grab') : 'default',
+                      transition: isDragging ? 'none' : 'transform 0.2s cubic-bezier(0.16, 1, 0.3, 1)'
+                    }}
+                  />
+                )}
+              </div>
 
               {/* Close Button */}
               <button
                 onClick={() => setIsOpen(false)}
-                className="absolute top-4 right-4 bg-black hover:bg-zinc-900 text-white rounded-none p-2.5 transition-colors border border-white cursor-pointer z-50"
+                className="absolute top-4 right-4 bg-black hover:bg-zinc-900 text-white rounded-none p-2.5 transition-colors border border-white cursor-pointer z-50 shadow-md"
                 aria-label="Cerrar"
               >
                 <X className="w-6 h-6 text-[#E60000]" />
               </button>
-
-              {/* Bottom Badge/Title bar */}
-              <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/95 to-transparent p-6 text-white z-10">
-                <span className="bg-white text-[#E60000] font-bold uppercase tracking-widest text-xs px-2 py-0.5">{badge}</span>
-                <h4 className="text-2xl font-squada tracking-wider mt-1">{title}</h4>
-              </div>
             </motion.div>
           </motion.div>
         )}
@@ -786,6 +918,10 @@ const ConceptSlide = ({ icon: Icon, title, description, badge, captureUrl }: any
 export default function App() {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [selectedCampaign, setSelectedCampaign] = useState<'cdmx' | 'aroma' | null>(null);
+
+  // Swipe gesture detection
+  const [touchStart, setTouchStart] = useState<{ x: number; y: number } | null>(null);
+  const [touchEnd, setTouchEnd] = useState<{ x: number; y: number } | null>(null);
 
   // Total slides calculations
   // Slides index mapping:
@@ -825,7 +961,7 @@ export default function App() {
   };
 
   const renderSlide = () => {
-    if (currentSlide === 0) return <Slide1Cover key="slide0" />;
+    if (currentSlide === 0) return <Slide1Cover key="slide0" onClick={nextSlide} />;
     if (currentSlide === 1) return <Slide2Agencia key="slide1" />;
     if (currentSlide === 2) return <Slide2Menu key="slide2" onSelectCampaign={handleSelectCampaign} selectedCampaign={selectedCampaign} />;
 
@@ -942,9 +1078,43 @@ export default function App() {
       );
     }
   };
+  const handleTouchStart = (e: React.TouchEvent) => {
+    setTouchEnd(null);
+    setTouchStart({
+      x: e.targetTouches[0].clientX,
+      y: e.targetTouches[0].clientY
+    });
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    setTouchEnd({
+      x: e.targetTouches[0].clientX,
+      y: e.targetTouches[0].clientY
+    });
+  };
+
+  const handleTouchEnd = () => {
+    if (!touchStart || !touchEnd) return;
+    const diffX = touchStart.x - touchEnd.x;
+    const diffY = touchStart.y - touchEnd.y;
+
+    // Trigger swipe transition only if horizontal movement dominates and is significant
+    if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 50) {
+      if (diffX > 0) {
+        nextSlide();
+      } else {
+        prevSlide();
+      }
+    }
+  };
 
   return (
-    <div className="relative w-full h-screen overflow-hidden bg-[#E60000] selection:bg-black selection:text-white font-sans">
+    <div 
+      className="relative w-full h-[100dvh] overflow-hidden bg-[#E60000] selection:bg-black selection:text-white font-sans"
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
+    >
       {/* Background Noise Texture for premium feel */}
       <div className="absolute inset-0 opacity-[0.03] pointer-events-none mix-blend-overlay" style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.65%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22/%3E%3C/svg%3E")' }}></div>
 
@@ -979,38 +1149,40 @@ export default function App() {
         </motion.div>
       </AnimatePresence>
 
-      {/* Navigation Controls */}
-      <div className="absolute bottom-8 left-0 right-0 flex justify-between items-center px-8 md:px-12 z-50">
-        <div className="flex gap-2">
+      <div className="absolute bottom-6 md:bottom-8 left-0 right-0 flex justify-between items-center px-4 md:px-12 z-50 pointer-events-none">
+        <div className="flex gap-1 md:gap-2 pointer-events-auto">
           {Array.from({ length: totalSlides }).map((_, i) => (
             <button
               key={i}
-              onClick={() => {
-                if (i >= 3 && !selectedCampaign) {
-                  setSelectedCampaign('cdmx');
-                }
+              onClick={(e) => {
+                e.stopPropagation();
+                if (i >= 3 && !selectedCampaign) setSelectedCampaign('cdmx');
                 setCurrentSlide(i);
               }}
-              className={`w-12 h-1.5 rounded-full transition-all duration-300 ${currentSlide === i ? 'bg-white' : 'bg-white/30 hover:bg-white/50'}`}
+              className={`h-1.5 rounded-full transition-all duration-300 cursor-pointer ${
+                currentSlide === i 
+                  ? 'w-6 md:w-12 bg-white' 
+                  : 'w-2 md:w-12 bg-white/30 hover:bg-white/50'
+              }`}
               aria-label={`Go to slide ${i + 1}`}
             />
           ))}
         </div>
 
-        <div className="flex gap-4">
+        <div className="flex gap-2 md:gap-4 pointer-events-auto">
           <button
-            onClick={prevSlide}
-            className="p-3 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-sm transition-colors text-white border border-white/10 cursor-pointer"
+            onClick={(e) => { e.stopPropagation(); prevSlide(); }}
+            className="p-2 md:p-3 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-sm transition-colors text-white border border-white/10 cursor-pointer"
             aria-label="Previous slide"
           >
-            <ChevronLeft size={24} />
+            <ChevronLeft size={20} className="md:w-6 md:h-6" />
           </button>
           <button
-            onClick={nextSlide}
-            className="p-3 rounded-full bg-white text-[#E60000] hover:bg-white/90 transition-colors shadow-lg cursor-pointer"
+            onClick={(e) => { e.stopPropagation(); nextSlide(); }}
+            className="p-2 md:p-3 rounded-full bg-white text-[#E60000] hover:bg-white/90 transition-colors shadow-lg cursor-pointer"
             aria-label="Next slide"
           >
-            <ChevronRight size={24} />
+            <ChevronRight size={20} className="md:w-6 md:h-6" />
           </button>
         </div>
       </div>
